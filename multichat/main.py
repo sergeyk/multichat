@@ -24,7 +24,7 @@ def main() -> int:
         ProviderSpec("xAI", "xai", "grok-4", "XAI_API_KEY"),
     ]
 
-    print(" · ".join(("✅ " if os.getenv(spec.env_var) else "❌ ") + spec.display_name for spec in provider_specs))
+    print(" · ".join(("✓ " if os.getenv(spec.env_var) else "✗ ") + spec.display_name for spec in provider_specs))
     if len(sys.argv) < 2:
         print('Usage: multichat "your message"')
         return 1

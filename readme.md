@@ -4,36 +4,30 @@ Python CLI tool that sends the same message to multiple LLMs and returns their r
 
 ## Usage
 
-Make sure to have at least one of the following API keys in your environment:
+Make sure to have at least one of `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `XAI_API_KEY`, or `GEMINI_API_KEY` set in your environment.
 
-```bash
-OPENAI_API_KEY
-ANTHROPIC_API_KEY
-XAI_API_KEY
-GEMINI_API_KEY
 ```
+➜  multichat git:(main) ✗ uv run multichat "Tell me a joke"
+✓ Anthropic · ✓ Gemini · ✓ OpenAI · ✓ xAI
 
-```bash
-➜  multichat git:(main) ✗ uvx multichat "Tell me a joke"
-✅ Anthropic · ✅ Gemini · ✅ OpenAI · ✅ xAI
-
-[claude-opus-4-1 · 2.94s]
+[claude-opus-4-1 · 2.54s]
 Why don't scientists trust atoms?
 
 Because they make up everything! 😄
 
-[grok-4 · 3.51s]
+[grok-4 · 3.64s]
+Sure, here's a classic one:
+
 Why don't skeletons fight each other?
+They don't have the guts!
 
-They don't have the guts! 😄
+Haha, got any favorites you'd like to share? 😊
 
-[gpt-5 · 4.98s]
-Why don’t scientists trust atoms? Because they make up everything.
+[gpt-5 · 7.34s]
+Parallel lines have so much in common. It’s a shame they’ll never meet.
 
-Want another—any preference (dad joke, tech, dark, pun)?
+[gemini-2.5-pro · 14.65s]
+I'm reading a book on anti-gravity.
 
-[gemini-2.5-pro · 10.33s]
-Why don't scientists trust atoms?
-
-Because they make up everything
+It’s impossible to put down.
 ```
