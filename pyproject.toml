@@ -5,9 +5,12 @@ description = "CLI to send the same message to multiple LLMs and return their re
 readme = { file = "readme.md", content-type = "text/markdown" }
 authors = [{ name = "Sergey Karayev" }]
 license = "Apache-2.0"
-version = "0.2.2"
+version = "0.3.0"
 requires-python = ">=3.11"
-dependencies = ["any-llm-sdk[anthropic,google,openai,xai]>=0.16.0"]
+dependencies = [
+    "any-llm-sdk[anthropic,google,openai,xai]>=0.16.0",
+    "click>=8.1",
+]
 
 [project.urls]
 Homepage = "https://github.com/sergeyk/multichat"
