@@ -1,11 +1,19 @@
 
 [project]
 name = "multichat"
-version = "0.2.0"
-description = "CLI to send the same message to multiple LLMs and returns their responses."
-readme = "README.md"
+description = "CLI to send the same message to multiple LLMs and return their responses."
+readme = { file = "readme.md", content-type = "text/markdown" }
+authors = [{ name = "Sergey Karayev" }]
+license = "Apache-2.0"
+version = "0.2.1"
 requires-python = ">=3.11"
 dependencies = ["any-llm-sdk[anthropic,google,openai,xai]>=0.16.0"]
+
+[project.urls]
+Homepage = "https://github.com/sergeyk/multichat"
+Issues = "https://github.com/sergeyk/multichat/issues"
+CI = "https://github.com/sergeyk/multichat/actions"
+Changelog = "https://github.com/sergeyk/multichat/releases"
 
 [project.scripts]
 multichat = "multichat.main:main"
