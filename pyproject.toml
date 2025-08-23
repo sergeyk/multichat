@@ -1,6 +1,3 @@
-[build-system]
-requires = ["setuptools>=48", "setuptools_scm[toml]>=6.3.1"]
-build-backend = "setuptools.build_meta"
 
 [project]
 name = "multichat"
@@ -9,6 +6,13 @@ description = "CLI to send the same message to multiple LLMs and returns their r
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["any-llm-sdk[anthropic,google,openai,xai]>=0.16.0"]
+
+[project.scripts]
+multichat = "multichat.main:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [tool.ruff]
 line-length = 120

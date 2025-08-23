@@ -14,5 +14,26 @@ GEMINI_API_KEY
 ```
 
 ```bash
-uvx multichat "Give me one interesting fact."
+➜  multichat git:(main) ✗ uvx multichat "Tell me a joke"
+✅ Anthropic · ✅ Gemini · ✅ OpenAI · ✅ xAI
+
+[claude-opus-4-1 · 2.94s]
+Why don't scientists trust atoms?
+
+Because they make up everything! 😄
+
+[grok-4 · 3.51s]
+Why don't skeletons fight each other?
+
+They don't have the guts! 😄
+
+[gpt-5 · 4.98s]
+Why don’t scientists trust atoms? Because they make up everything.
+
+Want another—any preference (dad joke, tech, dark, pun)?
+
+[gemini-2.5-pro · 10.33s]
+Why don't scientists trust atoms?
+
+Because they make up everything
 ```
