@@ -8,6 +8,15 @@ Warning: mostly vibe-coded using Codex with GPT-5.
 
 Make sure to have at least one of `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `XAI_API_KEY`, or `GEMINI_API_KEY` set in your environment.
 
+For example, you can stick them in your `~/.zshrc`:
+
+```
+export ANTHROPIC_API_KEY=
+export GEMINI_API_KEY=
+export OPENAI_API_KEY=
+export XAI_API_KEY=
+```
+
 Then, simply run `uvx multichat <message>`!
 
 ```
@@ -63,4 +72,10 @@ Humor is definitely subjective, but here's my breakdown:
 If I had to pick a "funniest" for its cleverness and originality, I'd give the edge to **GPT-5**.
 
 Which one made you laugh the most?
+```
+
+You can also pipe content from stdin instead of passing a positional message:
+
+```
+cat my_prompt.txt | uvx multichat --text
 ```
