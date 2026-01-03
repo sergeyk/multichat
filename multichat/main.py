@@ -84,10 +84,10 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
     from any_llm import acompletion
 
     provider_specs = [
-        ProviderSpec("Anthropic", "anthropic", "claude-opus-4-1", "ANTHROPIC_API_KEY"),
-        ProviderSpec("Gemini", "google", "gemini-2.5-pro", "GEMINI_API_KEY"),
-        ProviderSpec("OpenAI", "openai", "gpt-5", "OPENAI_API_KEY"),
-        ProviderSpec("xAI", "xai", "grok-4", "XAI_API_KEY"),
+        ProviderSpec("Anthropic", "anthropic", "claude-opus-4-5", "ANTHROPIC_API_KEY"),
+        ProviderSpec("Gemini", "google", "gemini-3-pro-preview", "GEMINI_API_KEY"),
+        ProviderSpec("OpenAI", "openai", "gpt-5.2", "OPENAI_API_KEY"),
+        ProviderSpec("xAI", "xai", "grok-4-1-fast-reasoning", "XAI_API_KEY"),
     ]
 
     print(" · ".join((("✓ " if os.getenv(spec.env_var) else "✗ ") + spec.display_name) for spec in provider_specs))

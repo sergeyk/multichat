@@ -16,16 +16,10 @@ class ProviderSpec:
 def get_provider_specs() -> List[ProviderSpec]:
     """Get the list of provider specifications."""
     return [
-        ProviderSpec(
-            "Anthropic",
-            "anthropic",
-            "Claude Opus 4.5",
-            "claude-opus-4-5",
-            "ANTHROPIC_API_KEY",
-        ),
+        ProviderSpec("Anthropic", "anthropic", "Claude Opus 4.5", "claude-opus-4-5", "ANTHROPIC_API_KEY"),
         ProviderSpec("Gemini", "gemini", "Gemini 3 Pro", "gemini-3-pro-preview", "GEMINI_API_KEY"),
         ProviderSpec("OpenAI", "openai", "GPT-5.2", "gpt-5.2", "OPENAI_API_KEY"),
-        ProviderSpec("xAI", "xai", "Grok 4.1", "grok-4.1-thinking", "XAI_API_KEY"),
+        ProviderSpec("xAI", "xai", "Grok 4.1", "grok-4-1-fast-reasoning", "XAI_API_KEY"),
     ]
 
 
