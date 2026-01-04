@@ -91,3 +91,16 @@ echo "hello" | uvx multichat
 When working in this repo, you should run `uv run multichat/main.py` instead of `uvx multichat`.
 
 Run formatting with `uvx ruff format`.
+
+Run tests with `uv run pytest`.
+
+## Releasing
+
+To release a new version:
+1. Update `version` in `pyproject.toml`
+2. Commit and push to `main`
+
+The CI workflow automatically:
+- Runs tests
+- Creates a GitHub Release with the new version tag
+- Publishes to PyPI via trusted publishing

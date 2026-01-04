@@ -1,15 +1,35 @@
-name: Release on Version Change
+name: CI / Release
 
 on:
   push:
     branches: [main]
+  pull_request:
 
 permissions:
   contents: write
   id-token: write # Required for PyPI trusted publishing
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Run tests
+        run: uv run pytest
+
   check-version:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.version.outputs.changed }}
@@ -53,7 +73,7 @@ jobs:
           fi
 
   release:
-    needs: check-version
+    needs: [test, check-version]
     if: needs.check-version.outputs.changed == 'true' && needs.check-version.outputs.tag_exists != 'true'
     runs-on: ubuntu-latest
     steps:
@@ -67,7 +87,7 @@ jobs:
           generate_release_notes: true
 
   publish:
-    needs: [check-version, release]
+    needs: [test, check-version, release]
     if: needs.check-version.outputs.changed == 'true' && needs.check-version.outputs.tag_exists != 'true'
     runs-on: ubuntu-latest
     environment:
