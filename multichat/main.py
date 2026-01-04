@@ -79,6 +79,7 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
     """Send a message to multiple LLMs. Use -c to continue last chat."""
     import asyncio
     import os
+    import sys
     import time
 
     from any_llm import acompletion
@@ -93,6 +94,9 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
     print(" · ".join((("✓ " if os.getenv(spec.env_var) else "✗ ") + spec.display_name) for spec in provider_specs))
 
     message_text = " ".join(message or ())
+    # If no message argument provided, try reading from stdin
+    if not message_text and not sys.stdin.isatty():
+        message_text = sys.stdin.read().strip()
     if not message_text:
         click.echo('Usage: multichat [-c] "your message"', err=True)
         raise SystemExit(1)
