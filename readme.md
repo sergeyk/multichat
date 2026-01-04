@@ -6,9 +6,11 @@ Warning: mostly vibe-coded using Codex with GPT-5.
 
 ## Usage
 
+### Basic
+
 Make sure to have at least one of `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `XAI_API_KEY`, or `GEMINI_API_KEY` set in your environment.
 
-For example, you can stick them in your `~/.zshrc`:
+For example, you can stick them in your `~/.zshrc` or `~/.bashrc` like so:
 
 ```
 export ANTHROPIC_API_KEY=
@@ -45,6 +47,8 @@ Why don't scientists trust atoms?
 Because they make up everything
 ```
 
+### Continuing conversation
+
 You can optionally continue the conversation, and each LLM will get the context of the entire preceding conversation.
 
 ```
@@ -74,8 +78,16 @@ If I had to pick a "funniest" for its cleverness and originality, I'd give the e
 Which one made you laugh the most?
 ```
 
+### Piping input
+
 You can also pipe content from stdin instead of passing a positional message:
 
 ```
-cat my_prompt.txt | uvx multichat --text
+echo "hello" | uvx multichat
 ```
+
+## Development
+
+When working in this repo, you should run `uv run multichat/main.py` instead of `uvx multichat`.
+
+Run formatting with `uvx ruff format`.

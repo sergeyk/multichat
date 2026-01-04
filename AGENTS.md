@@ -1,4 +1,3 @@
 # MultiChat: development instructions for AI Agents
 
-- Run Python only via `uv`
-- Format code with `uvx ruff format`
+Read @README.md, with a particular focus on the Development section.
