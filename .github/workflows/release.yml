@@ -1,0 +1,59 @@
+name: Release on Version Change
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Need previous commit to compare
+
+      - name: Check if version changed
+        id: version
+        run: |
+          # Get current version
+          CURRENT=$(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
+          echo "Current version: $CURRENT"
+
+          # Get previous version
+          git show HEAD~1:pyproject.toml > /tmp/old_pyproject.toml 2>/dev/null || echo ""
+          PREVIOUS=$(grep -Po '(?<=^version = ")[^"]*' /tmp/old_pyproject.toml 2>/dev/null || echo "")
+          echo "Previous version: $PREVIOUS"
+
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "previous=$PREVIOUS" >> $GITHUB_OUTPUT
+
+          if [ "$CURRENT" != "$PREVIOUS" ] && [ -n "$CURRENT" ]; then
+            echo "Version changed from $PREVIOUS to $CURRENT"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version unchanged"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if tag exists
+        if: steps.version.outputs.changed == 'true'
+        id: tag_check
+        run: |
+          if git ls-remote --tags origin | grep -q "refs/tags/v${{ steps.version.outputs.current }}$"; then
+            echo "Tag v${{ steps.version.outputs.current }} already exists"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag v${{ steps.version.outputs.current }} does not exist"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        if: steps.version.outputs.changed == 'true' && steps.tag_check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.current }}
+          name: v${{ steps.version.outputs.current }}
+          generate_release_notes: true
