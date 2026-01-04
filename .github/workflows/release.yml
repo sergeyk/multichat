@@ -6,29 +6,31 @@ on:
 
 permissions:
   contents: write
+  id-token: write # Required for PyPI trusted publishing
 
 jobs:
-  release:
+  check-version:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.version.outputs.changed }}
+      current: ${{ steps.version.outputs.current }}
+      tag_exists: ${{ steps.tag_check.outputs.exists }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # Need previous commit to compare
+          fetch-depth: 2
 
       - name: Check if version changed
         id: version
         run: |
-          # Get current version
           CURRENT=$(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
           echo "Current version: $CURRENT"
 
-          # Get previous version
           git show HEAD~1:pyproject.toml > /tmp/old_pyproject.toml 2>/dev/null || echo ""
           PREVIOUS=$(grep -Po '(?<=^version = ")[^"]*' /tmp/old_pyproject.toml 2>/dev/null || echo "")
           echo "Previous version: $PREVIOUS"
 
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
-          echo "previous=$PREVIOUS" >> $GITHUB_OUTPUT
 
           if [ "$CURRENT" != "$PREVIOUS" ] && [ -n "$CURRENT" ]; then
             echo "Version changed from $PREVIOUS to $CURRENT"
@@ -50,10 +52,42 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
+  release:
+    needs: check-version
+    if: needs.check-version.outputs.changed == 'true' && needs.check-version.outputs.tag_exists != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Create Release
-        if: steps.version.outputs.changed == 'true' && steps.tag_check.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.current }}
-          name: v${{ steps.version.outputs.current }}
+          tag_name: v${{ needs.check-version.outputs.current }}
+          name: v${{ needs.check-version.outputs.current }}
           generate_release_notes: true
+
+  publish:
+    needs: [check-version, release]
+    if: needs.check-version.outputs.changed == 'true' && needs.check-version.outputs.tag_exists != 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/multichat
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Build
+        run: uv build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
