@@ -90,7 +90,9 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
     from any_llm import acompletion
 
     provider_specs = [
-        ProviderSpec("Anthropic", "anthropic", "claude-opus-4-5", "ANTHROPIC_API_KEY", (217, 119, 6)),  # #d97706 amber/orange
+        ProviderSpec(
+            "Anthropic", "anthropic", "claude-opus-4-5", "ANTHROPIC_API_KEY", (217, 119, 6)
+        ),  # #d97706 amber/orange
         ProviderSpec("Gemini", "gemini", "gemini-3-pro-preview", "GEMINI_API_KEY", (59, 130, 246)),  # #3b82f6 blue
         ProviderSpec("OpenAI", "openai", "gpt-5.2", "OPENAI_API_KEY", (16, 163, 127)),  # #10a37f teal-green
         ProviderSpec("xAI", "xai", "grok-4-1-fast-reasoning", "XAI_API_KEY", (139, 92, 246)),  # #8b5cf6 violet
@@ -100,7 +102,9 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
     for spec in provider_specs:
         available = os.getenv(spec.env_var)
         mark = "✓ " if available else "✗ "
-        status_parts.append(click.style(mark + spec.display_name, fg=spec.color if available else (128, 128, 128), dim=not available))
+        status_parts.append(
+            click.style(mark + spec.display_name, fg=spec.color if available else (128, 128, 128), dim=not available)
+        )
     click.echo(" · ".join(status_parts))
 
     message_text = " ".join(message or ())

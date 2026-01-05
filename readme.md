@@ -82,8 +82,14 @@ Which one made you laugh the most?
 
 You can also pipe content from stdin instead of passing a positional message:
 
-```
+```bash
 echo "hello" | uvx multichat
+```
+
+Optionally, you can add a message to the end of the piped input:
+
+```bash
+cat README.md | uvx multichat "How do I run this?"
 ```
 
 ## Development
