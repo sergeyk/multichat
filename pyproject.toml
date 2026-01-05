@@ -5,7 +5,7 @@ description = "CLI to send the same message to multiple LLMs and return their re
 readme = { file = "readme.md", content-type = "text/markdown" }
 authors = [{ name = "Sergey Karayev" }]
 license = "Apache-2.0"
-version = "0.3.6"
+version = "0.3.7"
 requires-python = ">=3.11"
 dependencies = [
     "any-llm-sdk[anthropic,gemini,openai,xai]>=1.5.0",

@@ -2,9 +2,13 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import click
+
+
+# RGB color type for click.style() true color support
+Color = Union[str, Tuple[int, int, int]]
 
 
 @dataclass(frozen=True)
@@ -13,6 +17,7 @@ class ProviderSpec:
     provider_name: str
     model_name: str
     env_var: str
+    color: Color
 
 
 def _get_cache_dir() -> Path:
@@ -85,18 +90,29 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
     from any_llm import acompletion
 
     provider_specs = [
-        ProviderSpec("Anthropic", "anthropic", "claude-opus-4-5", "ANTHROPIC_API_KEY"),
-        ProviderSpec("Gemini", "gemini", "gemini-3-pro-preview", "GEMINI_API_KEY"),
-        ProviderSpec("OpenAI", "openai", "gpt-5.2", "OPENAI_API_KEY"),
-        ProviderSpec("xAI", "xai", "grok-4-1-fast-reasoning", "XAI_API_KEY"),
+        ProviderSpec("Anthropic", "anthropic", "claude-opus-4-5", "ANTHROPIC_API_KEY", (217, 119, 6)),  # #d97706 amber/orange
+        ProviderSpec("Gemini", "gemini", "gemini-3-pro-preview", "GEMINI_API_KEY", (59, 130, 246)),  # #3b82f6 blue
+        ProviderSpec("OpenAI", "openai", "gpt-5.2", "OPENAI_API_KEY", (16, 163, 127)),  # #10a37f teal-green
+        ProviderSpec("xAI", "xai", "grok-4-1-fast-reasoning", "XAI_API_KEY", (139, 92, 246)),  # #8b5cf6 violet
     ]
 
-    print(" · ".join((("✓ " if os.getenv(spec.env_var) else "✗ ") + spec.display_name) for spec in provider_specs))
+    status_parts = []
+    for spec in provider_specs:
+        available = os.getenv(spec.env_var)
+        mark = "✓ " if available else "✗ "
+        status_parts.append(click.style(mark + spec.display_name, fg=spec.color if available else (128, 128, 128), dim=not available))
+    click.echo(" · ".join(status_parts))
 
     message_text = " ".join(message or ())
-    # If no message argument provided, try reading from stdin
-    if not message_text and not sys.stdin.isatty():
-        message_text = sys.stdin.read().strip()
+    # Read piped content from stdin if available
+    if not sys.stdin.isatty():
+        piped_content = sys.stdin.read().strip()
+        if piped_content:
+            if message_text:
+                # Combine piped content with message argument
+                message_text = f"{piped_content}\n\n{message_text}"
+            else:
+                message_text = piped_content
     if not message_text:
         click.echo('Usage: multichat [-c] "your message"', err=True)
         raise SystemExit(1)
@@ -144,24 +160,25 @@ def main(continue_: bool, message: Tuple[str, ...]) -> None:
         response = await acompletion(**params)
         elapsed = time.perf_counter() - start
         content = response.choices[0].message.content
-        return spec.display_name, spec.model_name, elapsed, content
+        return spec.display_name, spec.model_name, elapsed, content, spec.color
 
     async def run_all():
         async def safe_call(spec: ProviderSpec):
             try:
-                display_name, model_name, elapsed, content = await call_provider_async(spec)
-                return display_name, model_name, elapsed, content, None
+                display_name, model_name, elapsed, content, color = await call_provider_async(spec)
+                return display_name, model_name, elapsed, content, color, None
             except Exception as ex:
-                return spec.display_name, spec.model_name, None, None, ex
+                return spec.display_name, spec.model_name, None, None, spec.color, ex
 
         tasks = [asyncio.create_task(safe_call(spec)) for spec in available_specs]
         collected: List[Tuple[str, str, float, str]] = []
         for task in asyncio.as_completed(tasks):
-            display_name, model_name, elapsed, content, error = await task
+            display_name, model_name, elapsed, content, color, error = await task
             if error is not None:
-                print(f"\n[{display_name}] Error: {error}")
+                click.secho(f"\n[{display_name}] Error: {error}", fg="red")
             else:
-                print(f"\n[{model_name} · {elapsed:.2f}s]\n{content}")
+                click.secho(f"\n[{model_name} · {elapsed:.2f}s]", fg=color, bold=True)
+                click.secho(content, fg=color)
                 collected.append((display_name, model_name, elapsed, content))
         return collected
 

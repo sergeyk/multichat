@@ -703,7 +703,7 @@ wheels = [
 
 [[package]]
 name = "multichat"
-version = "0.3.5"
+version = "0.3.7"
 source = { editable = "." }
 dependencies = [
     { name = "any-llm-sdk", extra = ["anthropic", "gemini", "xai"] },
